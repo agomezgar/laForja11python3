@@ -1,4 +1,3 @@
-# -*- coding:utf-8 -*-
 ''' This file is part of laForja (www.aprendizdetecnologo.com)
 
     laForja is free software: you can redistribute it and/or modify
@@ -183,6 +182,7 @@ class ventana:
             if not(trimestre==4):
                 consulta="SELECT * FROM "+tablaOrganizacion+" WHERE trimestre=="+str(trimestre)+" ORDER BY idestandar"
             else:
+                print ("Generando informe para curso completo")
                 consulta="SELECT * FROM "+tablaOrganizacion+" ORDER BY idestandar"
                 
             #print ("Consulta: "+consulta)
@@ -190,6 +190,7 @@ class ventana:
             recogeDatosOrganizacion=ejconsulta.fetchall()
             for r in recogeDatosOrganizacion:
                 if not(r[2] in estandares):
+                    #print(r[2])
                     estandares.append(r[2])
             nPesos={}
             for e in recogeDatosOrganizacion:
@@ -204,192 +205,13 @@ class ventana:
                 ponderaciones=ejPonderaciones.fetchone()
                 ponderacion=ponderaciones[2]
                 nPesos[e[2]]=ponderacion
-            #print(str(nPesos))
-            consultaPesos="SELECT * FROM "
-            #print("Datos de organización: "+str(recogeDatosOrganizacion))
-            #print("Estándares: "+str(estandares))
+
             pesoRelativo=0;
             pesosOrdenados=sorted(nPesos.keys())
             for p in pesosOrdenados:
                 #print("A "+p+" le corresponde un "+str(nPesos[p])+"%")
                 pesoRelativo+=int(nPesos[p])
-            #print("Peso relativo: "+str(pesoRelativo))
-            # #Creo un estándar de referencia que me permita saber si seguimos en el mismo o
-            # #cambiamos en cada iteración
-            # estandarR=0
-            # contenidoR=0
-            # #Variable que haga referencia a la ponderación del total de las notas
-            # notaR=0
-            # #Variable que haga referencia al criterio actual en el que estamos
-            # criterioR=0
-            # lEstandares=[]
-            # lCriterios=[]
-            # lInstrumentos=[]
-            # nOrden=-1
-            #
-            # for e in estandares:
-            #
-            #     #print (e)
-            #
-            #     #DE MOMENTO, SOLO HE ENCONTRADO ESTANDARES DE MAS DE 4 DIGITOS EN GEOGRAFIA E HISTORIA,
-            #     #LO QUE COMPLICA LA IDENTIFICACIÓN DE CRITERIOS Y CONTENIDOS
-            #     #LO BUENO ES QUE EN LOS CASOS DE CINCO DIGITOS SOLO SON DOS POSIBLES:
-            #     #O SE SUPERAN LOS 1O BLOQUES DE CONTENIDO EN 4º ESO (primer dígito=4 Y LOS DOS SIGUIENTES EL DE CONTENIDO)
-            #     #O SE SUPERAN LOS 10 CRITERIOS DE EVALUACIÓN EN 2º Y 3º (dígitos 3 y 4 FORMAN EL DE CONTENIDO)
-            #     #DE TODOS MODOS DE MOMENTO NO NECESITAMOS ESTOS NÚMEROS PORQUE LOS CRITERIOS SE BUSCAN
-            #     #DIRECTAMENTE POR SU CONTENIDO DE TEXTO
-            #     if (len(e[2][0])==5):
-            #         #print ("Hay un estandar de id superior a 4 digitos")
-            #         if (e[2][0]==4):
-            #             criterio=str(e[2][3])
-            #             contenido=str(e[2][1])+str(e[2][2])
-            #             #print ("Contenido: "+contenido)
-            #             #print ("Criterio: "+criterio)
-            #
-            #         else:
-            #             contenido=str(e[2][1])
-            #             criterio=str(e[2][2])+str(e[2][3])
-            #             #print ("Contenido: "+contenido)
-            #             #print ("Criterio: "+criterio)
-            #     else:
-            #         contenido=str(e[2][1])
-            #         criterio=str(e[2][2])
-            #
-            #     #print ("Curso: "+str(e[2][0])+", criterio: "+criterio+", contenido: "+contenido)
-            #
-            #         if not ((criterio==criterioR) and (contenido==contenidoR)):
-            #
-            #             #print ("Otro criterio más: ")
-            #             criterioR=criterio
-            #             contenidoR=contenido
-            #             nOrden=nOrden+1
-            #             consulta2="SELECT criterio FROM "+tablaEstandares+" WHERE id=="+e[2]
-            #             ejconsulta2=base.cursor.execute(consulta2)
-            #             cadenaCriterio=ejconsulta2.fetchone()
-            #             consulta3="SELECT ponderacion FROM "+tablaPonderacion+" WHERE criterio=(?)"
-            #             ejconsulta3=base.cursor.execute(consulta3,(cadenaCriterio[0],))
-            #             ponderacion=ejconsulta3.fetchone()
-            #             #print "Criterio: "+criterio[0]+", "+cadenaCriterio[0]+", ponderacion: "+str(ponderacion[0])+"%"
-            #             #Cada entrada del array de criterios incluye su nº de orden, referencia, ponderacion y criterio
-            #             criterioconPonderacion=[nOrden,criterioR,ponderacion[0],cadenaCriterio[0]]
-            #             lCriterios.append(criterioconPonderacion)
-            #             notaR=notaR+ponderacion[0]
-            #         if not (estandarR==e[2]):
-            #             nInstrumentos=0
-            #             estandarR=e[2]
-            #             #print ("Nuevo estandar para el criterio: "+criterioR+", :"+estandarR)
-            #             consulta="SELECT * FROM "+nombreTabla+" WHERE idestandar=="+estandarR
-            #             ejconsulta=base.cursor.execute(consulta)
-            #             valores=ejconsulta.fetchall()
-            #             for v in valores:
-            #                 nInstrumentos=nInstrumentos+1
-            #             #Cada entrada del array de estandares incluye su referencia, el nº de instrumentos, la prioridad y el nº de orden del array de criterios
-            #             grupoEstandar=[e[2],nInstrumentos,e[1],nOrden]
-            #
-            #             lEstandares.append(grupoEstandar)
-            #
-            #
-            #
-            # print ("Nota total de referencia: "+str(notaR))
-            # for l in lEstandares:
-            #     print ("estandar: "+str(l))
-            # #print ("Lista de criterios: ")
-            # #Creo un array de notas por Criterio (referencia,multiplicadorBasico,multiplicadorIntermedio,multiplicadorAvanzado)
-            # notasporCriterio=[]
-            #
-            # for c in lCriterios:
-            #     print ("Criterio: "+c[3]+", aportacion a la nota: (original "+str(c[2])+") : {0:.2f}".format(c[2]*100/notaR))
-            #     #print ("Lista de estandares: ")
-            #     nB=0
-            #     nInt=0
-            #     nAv=0
-            #     nOrden=0
-            #     for e in lEstandares:
-            #         #print (e)
-            #         if (e[3]==c[0]):
-            #             if (e[2]==1):
-            #                 nB+=1
-            #             if (e[2]==2):
-            #                 nInt+=1
-            #             if (e[2]==3):
-            #                 nAv+=1
-            #     #print ("En este criterio el nº de estandares basicos: "+str(nB)+", nº de estandares intermedios: "+str(nInt)+", nº de estandares avanzados: "+str(nAv))
-            #     if (nAv==0):
-            #         #print ("No hay estandares avanzados. Procedemos a comprobar si existen estandares intermedios")
-            #         if (nInt==0):
-            #             #print ("Tampoco hay estandares intermedios. Toda la nota ira a parar a los basicos, que son un total de: "+str(nB))
-            #             multBasico=float(100/nB)
-            #             #print("multBasico {0:.3f}".format(multBasico))
-            #             nota=[c[0],multBasico,0.00,0.00]
-            #             notasporCriterio.append(nota)
-            #
-            #             #if (nB==0):
-            #                 #print ("Tampoco se han encontrado estandares basicos. Aqui ha ocurrido un error de los gordos")
-            #         else:
-            #             #print ("Hay estandares intermedios. Procedemos a comprobar si hay estandares basicos para este criterio.")
-            #             if (nB==0):
-            #                 #print ("No hay estandares basicos. Toda la nota se debera a los estandares intermedios")
-            #                 multInt=float(100/nInt)
-            #                 #print("multInt {0:.3f}".format(multInt))
-            #                 nota=[c[0],0.00,multInt,0.00]
-            #                 notasporCriterio.append(nota)
-            #             else:
-            #                 #print ("La nota se repartira entre estandares intermedios y basicos")
-            #                 #multBasico=float((10/nB)*(prioridades[0][1]/(prioridades[0][1]+prioridades[1][1])))
-            #                 multBasico=float((prioridades[0][1]*100)/(nB*(prioridades[0][1]+prioridades[1][1])))
-            #                 multIntermedio=float((prioridades[1][1]*100)/(nInt*(prioridades[0][1]+prioridades[1][1])))
-            #
-            #                 #multIntermedio=float((10/)*(prioridades[1][1]/(prioridades[0][1]+prioridades[1][1])))
-            #                 #print("multBasico {0:.3f}".format(multBasico))
-            #                 #print("multInt {0:.3f}".format(multIntermedio))
-            #
-            #                 nota=[c[0],multBasico,multIntermedio,0.00]
-            #                 notasporCriterio.append(nota)
-            #     else:
-            #         #print ("Hay estandares avanzados")
-            #         if (nInt==0):
-            #             #print ("No hay estandares intermedios. Procedemos a buscar estandares basicos")
-            #             if (nB==0):
-            #                 #print ("Tampoco hay estandares basicos. Toda la nota se debera a los estandares avanzados")
-            #                 multAvanzado=float(100/nAv)
-            #                 #print("multAv {0:.3f}".format(multAvanzado))
-            #                 nota=[c[0],0,0,multAvanzado]
-            #                 notasporCriterio.append(nota)
-            #
-            #             else:
-            #                 #print ("La nota se repartira entre estandares avanzados y basicos")
-            #                 multBasico=float((prioridades[0][1]*100)/(nB*(prioridades[0][1]+prioridades[2][1])))
-            #                 multAvanzado=float((prioridades[2][1]*100)/(nAv*(prioridades[0][1]+prioridades[2][1])))
-            #
-            #                 #multIntermedio=float((10/)*(prioridades[1][1]/(prioridades[0][1]+prioridades[1][1])))
-            #                 #print("multBasico {0:.3f}".format(multBasico))
-            #                 #print("multAv {0:.3f}".format(multAvanzado))
-            #
-            #                 nota=[c[0],multBasico,0.00,multAvanzado]
-            #                 notasporCriterio.append(nota)
-            #         else:
-            #             #print ("Hay estandares avanzados e intermedios. Procedemos a buscar estandares basicos")
-            #             if (nB==0):
-            #                 #print("No hay estandares basicos. Toda la nota se repartira entre estandares avanzados e intermedios")
-            #                 #multAvanzado=float((nAv/10)*(prioridades[2][1]/(prioridades[1][1]+prioridades[2][1])))
-            #                 #multIntermedio=float((nInt/10)*(prioridades[1][1]/(prioridades[1][1]+prioridades[2][1])))
-            #                 multAvanzado=float((prioridades[2][1]*100)/(nB*(prioridades[2][1]+prioridades[1][1])))
-            #                 multIntermedio=float((prioridades[1][1]*100)/(nInt*(prioridades[0][1]+prioridades[1][1])))
-            #                 #print("multAvanzado {0:.3f}".format(multAvanzado))
-            #                 #print("multInt {0:.3f}".format(multIntermedio))
-            #                 nota=[c[0],0.00,multIntermedio,multAvanzado]
-            #                 notasporCriterio.append(nota)
-            #             else:
-            #                 #print ("La nota se repartira entre los tres tipos de estandares")
-            #                 multBasico=float((prioridades[0][1])/(nB))
-            #                 multIntermedio=float((prioridades[1][1])/(nInt))
-            #                 multAvanzado=float((prioridades[2][1])/nAv)
-            #                 nota=[c[0],multBasico,multIntermedio,multAvanzado]
-            #                 notasporCriterio.append(nota)
-            #     nOrden=nOrden+1
-            # print ("Matriz de notas: ")
-            # for n in notasporCriterio:
-            #     print (n)
+           
             nAlumno=0
 #GENERAMOS UN PDF
             
@@ -448,8 +270,12 @@ class ventana:
                     else:
                         pesoTotal=nPesos[e]
                     #Buscamos los instrumentos que corresponden a ese estandar y trimestre
-                    consultaInstrumentos = "SELECT * FROM " + tablaOrganizacion + " WHERE idestandar=(?) AND trimestre=(?)"
-                    ejInstrumentos = base.cursor.execute(consultaInstrumentos, (e,trimestre))
+                    if not(trimestre==4):
+                        consultaInstrumentos = "SELECT * FROM " + tablaOrganizacion + " WHERE idestandar=(?) AND trimestre=(?)"
+                        ejInstrumentos = base.cursor.execute(consultaInstrumentos, (e,trimestre))
+                    else:
+                        consultaInstrumentos = "SELECT * FROM " + tablaOrganizacion + " WHERE idestandar=(?)"
+                        ejInstrumentos = base.cursor.execute(consultaInstrumentos, (e,))
                     inst = ejInstrumentos.fetchall()
                     for i in inst:
                         cuentaInstrumentos+=1
@@ -493,128 +319,7 @@ class ventana:
                     Story.append(Paragraph(texto, cabecera3))
                     notaFinalAlumno+=notaEstandar
 
-                # for c in lCriterios:
-                #     #marcoc=VerticalScrolledFrame(marcoAlumnos[nAlumno].interior)
-                #     #mCriterios.append(marcoc)
-                #     #mCriterios[nCriterio].grid(row=nCriterio+1,column=0,sticky="nsew")
-                #     #mCriterios[nCriterio].columnconfigure(0,weight=1)
-                #     #informe.drawString(100,posicion,"Criterio: "+c[3])
-                #     notaCriterio=0
-                #     texto="Criterio: "+c[3]
-                #     Story.append(Paragraph(texto, cabecera2))
-                #     texto="Peso en la Programación Didáctica para todo el curso: "+str(c[2])+"%"
-                #     Story.append(Paragraph(texto, cabecera2))
-                #     posicion-=50
-                #     #if (posicion<100):
-                #     #    informe.showPage()
-                #     #    posicion=750
-                #     pesoCriterio=(c[2]/notaR)*100
-                #     texto="(Aportación al trimestre: "+str(pesoCriterio)+"%)"
-                #     Story.append(Paragraph(texto,cabecera2))
-                #     #RECUPERAMOS DEL ARRAY notasporCriterio LOS MULTIPLICADORES BASICO, INTERMEDIO Y AVANZADO
-                #     #QUE CORRESPONDERAN A LOS RESPECTIVOS ESTANDARES DEL CRITERIO ACTUAL
-                #     multBasico=notasporCriterio[nCriterio][1]
-                #     multInt=notasporCriterio[nCriterio][2]
-                #     multAv=notasporCriterio[nCriterio][3]
-                #     multip={1:multBasico,2:multInt,3:multAv}
-                #     #etCriterio=tk.Label(marcoAlumnos[nAlumno].interior,text="Criterio: "+c[3],relief="raised",wraplength=600)
-                #     #etCriterio.grid(row=nCuenta,column=0,sticky="nsew")
-                #     nEstandar=0
-                #     mEstandares=[]
-                #     nCuenta+=1
-                #     for e in lEstandares:
-                #         if (e[3]==nCriterio):
-                #             #print ("Nuevo estandar encontrado")
-                #             #marco=VerticalScrolledFrame(mCriterios[nCriterio].interior)
-                #             #mEstandares.append(marco)
-                #             #mEstandares[nEstandar].grid(row=nCriterio+1,column=0)
-                #             #mEstandares[nEstandar].columnconfigure(0,weight=1)
-                #             texto=base.identificaEstandar(self.materiaElegida,e[0])
-                #             #print (texto[0][0])
-                #             #etEstandar=tk.Label(marcoAlumnos[nAlumno].interior,text=texto[0][0],wraplength=600)
-                #             #etEstandar.grid(row=nCuenta,column=0,sticky="nsew")
-                #             #informe.drawString(100,posicion,"Estandar: "+texto[0][0])
-                #
-                #             texto2=""
-                #             if (e[2]==1):
-                #                 texto2=" (Básico)"
-                #             if (e[2]==2):
-                #                 texto2=" (Intermedio)"
-                #             if (e[2]==3):
-                #                 texto2=" (Avanzado)"
-                #             texto="Estandar: "+texto[0][0]
-                #
-                #             Story.append(Paragraph(texto, cabecera3))
-                #             Story.append(Paragraph(texto2,cabecera3))
-                #             texto="(Aportación a la nota: "+str(multip.get(e[2]))+"%)"
-                #             #print ("El estandar "+str(e[0])+" con prioridad "+str(e[2])+" usará el multiplicador "+ str(multip.get(e[2])))
-                #             Story.append(Paragraph(texto, cabecera3))
-                #             posicion-=50
-                #             #if (posicion<100):
-                #              #   informe.showPage()
-                #               #  posicion=750
-                #             nCuenta+=1
-                #             instrumentos=base.buscaInstrumentosporEstandar(self.nivelMateria,self.materiaElegida,trimestre,e[0])
-                #
-                #
-                #             notaEstandar=0
-                #             for i in instrumentos:
-                #                 #print ("Instrumento: ")
-                #
-                #                 #etInst=tk.Label(marcoAlumnos[nAlumno].interior,text="Instrumento: "+i[0])
-                #                 #etInst.grid(row=nCuenta,column=0,sticky="nsew")
-                #                 nCuenta+=1
-                #                 notas=base.buscaNotas(self.nivelMateria,self.materiaElegida,idAlumno,i[0])
-                #                     #print (nota)
-                #                 cadena="SELECT instrumento FROM "+self.materiaElegida+"instrumentos"+str(self.nivelMateria)+" WHERE id=="+str(i[0])
-                #                 consultaT=base.cursor.execute(cadena)
-                #                 nombreInstrumento=consultaT.fetchone()[0]
-                #                 texto="Instrumento de evaluación: "+str(nombreInstrumento)
-                #                 Story.append(Paragraph(texto,estilos["Normal"]))
-                #                 if (len(notas)==0):
-                #                     texto="El alumno no tiene ninguna nota asignada en este instrumento"
-                #                     notaInstrumento=0
-                #                 elif (len(notas)>1):
-                #                     texto="Hay varias notas registradas en este instrumento de evaluación: \n"
-                #                     notaMedia=0
-                #                     for n in notas:
-                #                         texto+="Nota: "+str(n[3])+"\n"
-                #                         notaMedia+=n[3]
-                #                     notaInstrumento=notaMedia/len(notas)
-                #                     texto+="Nota final: "+str(notaInstrumento)
-                #                 else:
-                #                     texto="Nota única: "
-                #                     notaInstrumento=n[3]
-                #                     for n in notas:
-                #                         texto+=str(n[3])+"\n"
-                #
-                #                 Story.append(Paragraph(texto,estilos["Normal"]))
-                #                 notaEstandar+=notaInstrumento
-                #             #CALCULO LA NOTA DEL ESTANDAR
-                #             #A PARTIR DE AQUÍ HAY QUE VER CÓMO ENFOCAMOS LA POSIBILIDAD
-                #             #DE CAMBIAR ESTÁNDARES DE TRIMESTRE
-                #             notaEstandar=notaEstandar/len(instrumentos)
-                #             texto="Nota total del estándar: "+str(notaEstandar)
-                #             Story.append(Paragraph(texto,estilos["Normal"]))
-                #             texto="(Peso de esta nota dentro del criterio: "+str(multip.get(e[2]))+"%)"
-                #             Story.append(Paragraph(texto,estilos["Normal"]))
-                #             #ASIGNO LA APORTACIÓN DEL ESTÁNDAR A LA NOTA DEL CRITERIO
-                #             notaTemporal=(notaEstandar*multip.get(e[2]))/100
-                #             texto="(Aportación a la nota del criterio: "+str(notaTemporal)+")"
-                #             #VOY CONSTRUYENDO LA NOTA DEL CRITERIO SUMANDO LAS NOTAS DE CADA ESTANDAR DEBIDAMENTE PONDERADAS
-                #             notaCriterio+=notaTemporal
-                #             Story.append(Paragraph(texto,estilos["Normal"]))
-                #             nEstandar+=1
-                #             nCuenta+=1
-                #     texto="Nota total del criterio: "+str(notaCriterio)
-                #     Story.append(Paragraph(texto,cabecera2))
-                #     notaFinalCriterio=notaCriterio*pesoCriterio/100
-                #     notaFinalAlumno+=notaFinalCriterio
-                #     texto="Aportación total de la nota del criterio a la nota del trimestre:  "+str(notaFinalCriterio)
-                #     Story.append(Paragraph(texto,cabecera2))
-                #     nCriterio+=1
-                # texto="Nota total del alumno:  "+str(notaFinalAlumno)
-                #Story.append(Paragraph(texto,cabecera))
+              
 
                 texto=" Nota final para el alumno "+l[1]+", "+l[2]+":  {0: .2f}".format(notaFinalAlumno)
                 Story.append(Paragraph(texto,cabecera))
@@ -623,17 +328,14 @@ class ventana:
                 Story.append(PageBreak())
             base.close()
             doc.build(Story)
-            #informe.save()
-            #webbrowser.open_new(r'informe.pdf')
-            #file=os.path.abspath('informe.pdf')
-            #print(file)
-            #subprocess.Popen(os.path.abspath('informe.pdf'), shell=True)
-            # try:
-            #     webbrowser.open_new(r'informe.pdf')
-            # except Exception as e:
-            #     print (e)
-            #     messagebox.showinfo("Problemas abriendo en navegador web","A continuación se abrirá el informe con el lector xpdf. Si hubiera algún error, asegúrese de tenerlo instalado")
-            #     os.system('xpdf.real informe.pdf')
+    
+##            try:
+##                webbrowser.open_new(r'informe.pdf')
+##            except Exception as e:
+##                print (e)
+##                messagebox.showinfo("Problemas abriendo en navegador web","A continuación se abrirá el informe con el lector xpdf. Si hubiera algún error, asegúrese de tenerlo instalado")
+##                #os.system('xpdf.real informe.pdf')
+##                subprocess.Popen(os.path.abspath('informe.pdf'), shell=True)
         #PARA CREAR UN INFORME EN PDF EN LINUX, DADO QUE PYINSTALLER NO SE LLEVA BIEN CON EVINCE:
             os.system('xpdf.real informe.pdf')
 
